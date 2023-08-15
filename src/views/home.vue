@@ -1,7 +1,7 @@
 <template>
   <div class="pagedesign">
     <div class="left">
-      <el-tabs type="border-card" tab-position="left" style="height: 100vh">
+      <el-tabs type="border-card" tab-position="left" style="height: 98vh">
         <el-tab-pane label="文本">
           <div class="text_selection">
             <div class="text1" @click="addtext(1)">大标题</div>
@@ -31,7 +31,7 @@
             <img
               v-for="(item, index) in images"
               :key="index"
-              :src="item"
+              :src="item.src"
               alt=""
               @click="addImg(item)"
             />
@@ -52,75 +52,82 @@
       </el-tabs>
     </div>
     <div class="con">
-      <div
-        ref="content"
-        class="content"
-        :style="{
-          height: backdrop.height + 'px',
-          width: backdrop.width + 'px',
-          'background-color': backdrop.backgroung,
-          zoom: backdrop.zoom,
-        }"
-      >
-        <vue-draggable-resizable
-          v-for="(item, index) in view"
-          id="view"
-          :key="item.id"
-          class="view"
-          :w="item.width"
-          :h="item.height"
-          :z="item.z_index"
-          :minw="10"
-          :minh="10"
-          :class-name="'vdr' + ' ' + 'boxsa' + item.id"
-          :class="border_none ? 'borderNone' : ''"
-          :parent="true"
-          :grid="[1, 1]"
-          @resizing="onResize"
-          @dragging="onDrag"
-          @click="select(item, index)"
+      <div class="contentbg" 
+          :style="{
+            height: backdrop.height + 'px',
+            width: backdrop.width + 'px',
+            zoom: backdrop.zoom,
+          }">
+        <div
+          ref="content"
+          class="content"
+          :style="{
+            height: backdrop.height + 'px',
+            width: backdrop.width + 'px',
+            'background-color': backdrop.backgroung,
+            zoom: backdrop.zoom,
+          }"
         >
-          <div
-            v-if="item.type != 'img'"
-            :style="{
-              height: item.height + 'px',
-              width: item.width + 'px',
-              color: item.color,
-              'font-size': item.size + 'px',
-              'font-weight': item.font_weight,
-              'border-width': item.border_width + 'px',
-              'border-style': item.border_style,
-              'border-color': item.border_color,
-              'background-color': item.background_color,
-              'border-radius': item.radius + 'px',
-              'z-index': item.z_index,
-            }"
-            
+          <vue-draggable-resizable
+            v-for="(item, index) in view"
+            id="view"
+            :key="item.id"
+            class="view"
+            :w="item.width"
+            :h="item.height"
+            :z="item.z_index"
+            :minw="10"
+            :minh="10"
+            :class-name="'vdr' + ' ' + 'boxsa' + item.id"
+            :class="border_none ? 'borderNone' : ''"
+            :parent="true"
+            :grid="[1, 1]"
+            @resizing="onResize"
+            @dragging="onDrag"
+            @click="select(item, index)"
           >
-            {{ item.value }}
-          </div>
-          <img
-            v-if="item.type === 'img'"
-            :src="item.src"
-            :style="{
-              'object-fit': 'fill',
-              top: item.top + 'px',
-              left: item.left + 'px',
-              height: item.height + 'px',
-              width: item.width + 'px',
-              color: item.color,
-              'font-size': item.size + 'px',
-              'font-weight': item.font_weight,
-              'border-width': item.border_width + 'px',
-              'border-style': item.border_style,
-              'border-color': item.border_color,
-              'background-color': item.background_color,
-              'border-radius': item.radius + 'px',
-              'z-index': item.z_index,
-            }"
-            
-          />
-        </vue-draggable-resizable>
+            <div
+              v-if="item.type != 'img'"
+              :style="{
+                height: item.height + 'px',
+                width: item.width + 'px',
+                color: item.color,
+                'font-size': item.size + 'px',
+                'font-weight': item.font_weight,
+                'border-width': item.border_width + 'px',
+                'border-style': item.border_style,
+                'border-color': item.border_color,
+                'background-color': item.background_color,
+                'border-radius': item.radius + 'px',
+                'z-index': item.z_index,
+              }"
+              
+            >
+              {{ item.value }}
+            </div>
+            <img
+              v-if="item.type === 'img'"
+              :src="item.src"
+              :style="{
+                'object-fit': 'fill',
+                top: item.top + 'px',
+                left: item.left + 'px',
+                height: item.height + 'px',
+                width: item.width + 'px',
+                color: item.color,
+                'font-size': item.size + 'px',
+                'font-weight': item.font_weight,
+                'border-width': item.border_width + 'px',
+                'border-style': item.border_style,
+                'border-color': item.border_color,
+                'background-color': item.background_color,
+                'border-radius': item.radius + 'px',
+                'z-index': item.z_index,
+              }"
+              
+            />
+          </vue-draggable-resizable>
+        </div>
       </div>
     </div>
     <div class="right">
@@ -413,15 +420,10 @@ import "vue-draggable-resizable/dist/VueDraggableResizable.css";
 import standards from "./pagedesign.js";
 import html2canvas from "html2canvas";
 import { ElMessage } from "element-plus";
+import getImageSize from '../utils/imageSize.js'
 const standard = reactive(standards);
 // const standard = standards
-const images = reactive([
-  "http://bearcarimg.codebear.cn/7456f975fccea2d5cce19a82e08912ec3ilFkUx56xsHRcFttsqK2Q!gradual.show",
-  "http://bearcarimg.codebear.cn/be123aa0b72465ee503c7ba5c368863bXC6Yu6FwQMPiYF1yk3F2q!gradual.show",
-  "http://bearcarimg.codebear.cn/ce6f9ec8a0d9f077930c15b91b82252b7j9z2sowAjxQQjNJ7eMJwO!gradual.show",
-  "http://bearcarimg.codebear.cn/e8b71e7857b96c7b0c091b1f7592fea536hoikc99bOmERWGriRQDU!gradual.show",
-  "http://bearcarimg.codebear.cn/5de18d7dd61a4c9b055efdabb9f09c836WgCbYTpXrQq9eWgeTXU1s!gradual.show",
-]);
+const images = reactive([{src:"http://bearcarimg.codebear.cn/7456f975fccea2d5cce19a82e08912ec3ilFkUx56xsHRcFttsqK2Q!gradual.show",w:200,h:267},{src:"http://bearcarimg.codebear.cn/be123aa0b72465ee503c7ba5c368863bXC6Yu6FwQMPiYF1yk3F2q!gradual.show",w:200,h:267},{src:"http://bearcarimg.codebear.cn/ce6f9ec8a0d9f077930c15b91b82252b7j9z2sowAjxQQjNJ7eMJwO!gradual.show",w:200,h:113},{src:"http://bearcarimg.codebear.cn/e8b71e7857b96c7b0c091b1f7592fea536hoikc99bOmERWGriRQDU!gradual.show",w:200,h:113},{src:"http://bearcarimg.codebear.cn/5de18d7dd61a4c9b055efdabb9f09c836WgCbYTpXrQq9eWgeTXU1s!gradual.show",w:200,h:113}]);
 const backdrop = reactive({
   width: 400,
   height: 750,
@@ -477,9 +479,9 @@ function addshape(i) {
 // 添加图片
 function addImg(item) {
   const obj = {
-    src: item,
-    width: 200,
-    height: 200,
+    src: item.src,
+    width: item.w,
+    height: item.h,
     top: 0,
     left: 0,
     type: "img",
@@ -525,6 +527,7 @@ function onDrag(x, y) {
 const content = ref(null);
 // 导出数据
 function exportJson() {
+
   // 强制刷新
   proxy.$forceUpdate()
   fullscreenLoading.value = true;
@@ -539,7 +542,7 @@ function exportJson() {
       // width: 30, //截图宽度
       // height: 50, //截图高度
       allowTaint: true,
-      backgroundColor: null, // 画出来的图片有白色的边框,不要可设置背景为透明色（null）
+      backgroundColor: backdrop.backgroung, // 画出来的图片有白色的边框,不要可设置背景为透明色（null）
       useCORS: true, // 支持图片跨域
       scale: backdrop.zoom, // 设置放大的倍数
     }).then(function (canvas) {
@@ -654,35 +657,16 @@ function phoneDown(imgsrc, name) {
   image.src = imgsrc;
 }
 // 上传图片
-function afterImg(file) {
-  getBase64(file.file).then((res) => {
-    images.push(res);
+async function afterImg(file) {
+  let img = await getImageSize(file.file)
+  // console.log(img);
+  images.push(img);
     ElMessage({
       message: "上传成功",
       type: "success",
     });
-  });
 }
-// file转base64
-function getBase64(file) {
-  return new Promise((resolve, reject) => {
-    let reader = new FileReader();
-    let fileResult = "";
-    reader.readAsDataURL(file);
-    //开始转
-    reader.onload = function () {
-      fileResult = reader.result;
-    };
-    //转 失败
-    reader.onerror = function (error) {
-      reject(error);
-    };
-    //转 结束  咱就 resolve 出去
-    reader.onloadend = function () {
-      resolve(fileResult);
-    };
-  });
-}
+
 </script>
 
 <style lang="scss" src="./pagedesign.scss" scoped>
@@ -701,19 +685,22 @@ function getBase64(file) {
 
   .con {
     flex: 2;
-    height: 100vh;
+    height: 98vh;
     min-width: 500px;
     background-color: #f5f5f5;
     overflow: auto;
-
+    .contentbg{
+      margin: 50px auto;
+      box-shadow: 1px 1px 10px 3px rgb(0 0 0 / 10%);
+    }
     .content {
       user-select: none;
-      margin: 50px auto;
+      
       // transform: scale(0.4);
       // transform-origin: left top;
       // zoom: 0.5;
       position: relative;
-      box-shadow: 1px 1px 10px 3px rgb(0 0 0 / 10%);
+      
 
       .borderNone {
         border: none !important;
@@ -730,7 +717,7 @@ function getBase64(file) {
 
   .right {
     flex: 1;
-    // width: 300px;
+    min-width: 350px;
     height: 100%;
 
     .size {
